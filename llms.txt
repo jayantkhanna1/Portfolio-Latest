@@ -1,0 +1,27 @@
+# Jayant Khanna
+
+> Software engineer from India. Founding Engineer at Roomrr (https://roomrr.com), former Data Engineer at Genpact (Feb 2024 – Dec 2026), and a freelance Python, Django, React and Generative AI developer since 2021: 29 live websites for 13 clients.
+
+## Services (freelance)
+
+- Python and Django backend development (Django REST Framework, FastAPI, PostgreSQL)
+- Full-stack web development (React, Node.js)
+- Mobile app development (React Native)
+- Generative AI and automation: RAG search, LLM apps, chat bots, workflow automation
+- Data engineering: PySpark, Databricks, ETL and data-quality pipelines
+
+## Experience
+
+- Roomrr: Founding Engineer, full-time (2026 – present). Started as a freelance client.
+- Genpact: Data Engineer, full-time (Feb 2024 – Dec 2026)
+- Freelance Software Engineer (2021 – present): mobile Employee ERP, full-stack apps and automation bots, Generative AI for healthcare, Python APIs and connectors, e-commerce front end.
+
+Education: B.Tech, Computer Science & Engineering, Graphic Era Deemed University (2020 – 2024).
+
+## Links
+
+- [Portfolio](https://jayantkhanna.in/): projects, resume, client reviews and contact form
+- [LinkedIn](https://www.linkedin.com/in/jayantkhanna1/)
+- [GitHub](https://github.com/jayantkhanna1)
+- [Medium](https://medium.com/@jayantkhanna3105)
+- [Roomrr blog articles](https://roomrr.com/jayant-khanna.html)

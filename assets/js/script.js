@@ -12,7 +12,10 @@ const sidebar = document.querySelector("[data-sidebar]");
 const sidebarBtn = document.querySelector("[data-sidebar-btn]");
 
 // sidebar toggle functionality for mobile
-sidebarBtn.addEventListener("click", function () { elementToggleFunc(sidebar); });
+sidebarBtn.addEventListener("click", function () {
+  elementToggleFunc(sidebar);
+  sidebarBtn.setAttribute("aria-expanded", sidebar.classList.contains("active") ? "true" : "false");
+});
 
 
 
@@ -26,21 +29,37 @@ const overlay = document.querySelector("[data-overlay]");
 const modalImg = document.querySelector("[data-modal-img]");
 const modalTitle = document.querySelector("[data-modal-title]");
 const modalText = document.querySelector("[data-modal-text]");
+const modalRole = document.querySelector("[data-modal-role]");
 
 // modal toggle function
+let lastFocus = null;
 const testimonialsModalFunc = function () {
   modalContainer.classList.toggle("active");
   overlay.classList.toggle("active");
+  if (modalContainer.classList.contains("active")) {
+    lastFocus = document.activeElement;
+    // Wait for the dialog's fade-in to make it visible before moving focus into it.
+    setTimeout(function () { modalCloseBtn.focus(); }, 60);
+  } else if (lastFocus) {
+    lastFocus.focus();
+  }
 }
 
 // add click event to all modal items
 for (let i = 0; i < testimonialsItem.length; i++) {
+
+  testimonialsItem[i].setAttribute("role", "button");
+  testimonialsItem[i].setAttribute("tabindex", "0");
+  testimonialsItem[i].addEventListener("keydown", function (e) {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); this.click(); }
+  });
 
   testimonialsItem[i].addEventListener("click", function () {
 
     modalImg.src = this.querySelector("[data-testimonials-avatar]").src;
     modalImg.alt = this.querySelector("[data-testimonials-avatar]").alt;
     modalTitle.innerHTML = this.querySelector("[data-testimonials-title]").innerHTML;
+    modalRole.innerHTML = this.querySelector("[data-testimonials-role]").innerHTML;
     modalText.innerHTML = this.querySelector("[data-testimonials-text]").innerHTML;
 
     testimonialsModalFunc();
@@ -52,6 +71,9 @@ for (let i = 0; i < testimonialsItem.length; i++) {
 // add click event to modal close button
 modalCloseBtn.addEventListener("click", testimonialsModalFunc);
 overlay.addEventListener("click", testimonialsModalFunc);
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Escape" && modalContainer.classList.contains("active")) testimonialsModalFunc();
+});
 
 
 
@@ -144,38 +166,37 @@ for (let i = 0; i < formInputs.length; i++) {
 const navigationLinks = document.querySelectorAll("[data-nav-link]");
 const pages = document.querySelectorAll("[data-page]");
 
-// add event to all nav link
+// Show one section. Each section also has its own address (e.g. /#resume) so it can be shared and bookmarked.
+function openPage(page, fromHistory) {
+  let found = false;
+  for (let i = 0; i < pages.length; i++) {
+    const match = page === pages[i].dataset.page;
+    pages[i].classList.toggle("active", match);
+    navigationLinks[i].classList.toggle("active", match);
+    if (match) { navigationLinks[i].setAttribute("aria-current", "page"); found = true; }
+    else navigationLinks[i].removeAttribute("aria-current");
+  }
+  if (!found) return openPage("about", fromHistory);
+  if (!fromHistory) {
+    const hash = page === "about" ? location.pathname : "#" + page;
+    if ((location.hash || "#about") !== "#" + page) history.pushState(null, "", hash);
+  }
+  window.scrollTo(0, 0);
+}
+
 for (let i = 0; i < navigationLinks.length; i++) {
   navigationLinks[i].addEventListener("click", function () {
-
-    for (let i = 0; i < pages.length; i++) {
-      if (this.innerHTML.toLowerCase() === pages[i].dataset.page) {
-        pages[i].classList.add("active");
-        navigationLinks[i].classList.add("active");
-        window.scrollTo(0, 0);
-      } else {
-        pages[i].classList.remove("active");
-        navigationLinks[i].classList.remove("active");
-      }
-    }
-
+    openPage(this.innerHTML.toLowerCase());
   });
 }
 
+// Home cards: open with Enter / Space as well as a click.
+document.querySelectorAll("[data-open]").forEach(function (card) {
+  card.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); openPage(card.dataset.open); }
+  });
+});
 
-
-
-function openPage(page){
-  const pages = document.querySelectorAll("[data-page]");
-  for (let i = 0; i < pages.length; i++) {
-    if (page === pages[i].dataset.page) {
-      pages[i].classList.add("active");
-      navigationLinks[i].classList.add("active");
-      window.scrollTo(0, 0);
-    } else {
-      pages[i].classList.remove("active");
-      navigationLinks[i].classList.remove("active");
-    }
-  }
-
-}
+function pageFromHash() { return (location.hash || "#about").slice(1).toLowerCase(); }
+window.addEventListener("popstate", function () { openPage(pageFromHash(), true); });
+if (location.hash) openPage(pageFromHash(), true);
